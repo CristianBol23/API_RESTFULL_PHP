@@ -63,6 +63,41 @@
             $stmt->close();
             $stmt=null;
         }
+
+        static public function update($tabla, $datos){
+            $stmt=Conexion::conectar()->prepare("UPDATE $tabla SET nombre=:nombre, apellido=:apellido,
+            email=:email,updated_at=:updated_at WHERE id=:id");
+
+            $stmt->bindParam(":id", $datos["id"], PDO::PARAM_STR);
+            $stmt->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
+            $stmt->bindParam(":apellido", $datos["apellido"], PDO::PARAM_STR);
+            $stmt->bindParam(":email", $datos["email"], PDO::PARAM_STR);
+            $stmt->bindParam(":updated_at", $datos["updated_at"], PDO::PARAM_STR);  
+            
+            if($stmt->execute()){
+                return "ok";
+            }else{
+                print_r(Conexion::conectar()->errorInfo());
+            }
+
+            $stmt->close();
+            $stmt=null;
+        }
+
+        static public function delete($tabla, $id){
+            $stmt = Conexion::conectar()->prepare("DELETE FROM $tabla WHERE id=:id");
+
+            $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+
+            if($stmt->execute()){
+                return "ok";
+            }else{
+                print_r(Conexion::conectar()->errorInfo());
+            }   
+
+            $stmt->close();
+            $stmt=null;
+        }
     }
 
 ?>

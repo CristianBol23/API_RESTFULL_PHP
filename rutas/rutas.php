@@ -98,35 +98,63 @@
                     $clientes->create($datos);
                 }
             } 
-        }else if(array_filter($arrayRutas)[3]=="cursos" && is_numeric(array_filter($arrayRutas)[4])){
-            // Petición GET
-            if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "GET"){
-                $curso = new ControladorCursos;
-                $curso->show(array_filter($arrayRutas)[4]);
-            }
-            // Petición PUT
-            if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "PUT"){
+        // Aquí se reciben las peticiones que manden un id desde la URL
+        // Requests that send an id from the URL are received here
+        }else if(is_numeric(array_filter($arrayRutas)[4])){
+            // Aquí se reciben las peticiones para los cursos
+            // Requests for the courses are received here
+            if(array_filter($arrayRutas)[3]=="cursos"){
+                // Petición GET
+                if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "GET"){
+                    $curso = new ControladorCursos;
+                    $curso->show(array_filter($arrayRutas)[4]);
+                }
+                // Petición PUT
+                if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "PUT"){
+    
+                    // Capturar los datos
+                    // Capture the data
+                    $datos = array();
+    
+                    /*
+                        Esta es una normativa para la petición PUT, por medio de php://input capturamos los datos 
+                        enviados desde el formulario por el usuario con el método file_get_contents, esto necesita un
+                        array donde almacenar esa data, por tanto, se le envia el array $datos. Y se necesita el 
+                        parse_str para parsear el string que genera el file_get_contents.
+                    */
+                    parse_str(file_get_contents('php://input'), $datos);
+    
+                    $editarCurso = new ControladorCursos();
+                    $editarCurso->update(array_filter($arrayRutas)[4], $datos);
+                }
+                // Petición DELETE
+                if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "DELETE"){
+                    $borrarCurso = new ControladorCursos;
+                    $borrarCurso->delete(array_filter($arrayRutas)[4]);
+                }
+            // Aqui se reciben las peticiones para los clientes
+            // Requests from the clientes are received here
+            }else if(array_filter($arrayRutas)[3] == "registro"){
+                // Petición PUT
+                // PUT request
+                if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "PUT"){
+                    // Capturar los datos
+                    // Capture the data
+                    $datos = array();
 
-                // Capturar los datos
-                // Capture the data
-                $datos = array();
+                    parse_str(file_get_contents('php://input'), $datos);
 
-                /*
-                    Esta es una normativa para la petición PUT, por medio de php://input capturamos los datos 
-                    enviados desde el formulario por el usuario con el método file_get_contents, esto necesita un
-                    array donde almacenar esa data, por tanto, se le envia el array $datos. Y se necesita el 
-                    parse_str para parsear el string que genera el file_get_contents.
-                */
-                parse_str(file_get_contents('php://input'), $datos);
+                    $editarCliente = new ControladorClientes;
+                    $editarCliente->update(array_filter($arrayRutas)[4], $datos);
+                }
 
-                $editarCurso = new ControladorCursos();
-                $editarCurso->update(array_filter($arrayRutas)[4], $datos);
+                // Petición DELETE
+                // DELETE request
+                if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "DELETE"){
+                    $borrarCliente = new ControladorClientes;
+                    $borrarCliente->delete(array_filter($arrayRutas)[4]);
+                }
             }
-            // Petición DELETE
-            if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "DELETE"){
-                $borrarCurso = new ControladorCursos;
-                $borrarCurso->delete(array_filter($arrayRutas)[4]);
-            }
-        }   
+        }  
     }
 ?>
